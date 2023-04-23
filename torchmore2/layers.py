@@ -15,6 +15,44 @@ from torch.nn import functional as F
 
 from .utils import *
 
+class Fun(nn.Module):
+    """Turn an arbitrary function into a layer.
+    
+    This takes a string as an argument and can be pickled.
+    """
+
+    def __init__(self, f: str, info=None):
+        super().__init__()
+        assert isinstance(f, str), type(f)
+        self.f = eval(f)
+        self.f_str = f
+        self.info = info
+
+    def __getnewargs__(self):
+        return (self.f_str, self.info)
+
+    def forward(self, x):
+        return self.f(x)
+
+    def __repr__(self):
+        return "Fun {} {}".format(self.info, self.f_str)
+class Fun_(nn.Module):
+    """Turn an arbitrary function into a layer.
+    
+    This takes a callable as an argument and cannot be pickled.
+    """
+
+    def __init__(self, f: Callable, info=None):
+        super().__init__()
+        assert callable(f)
+        self.f = f
+        self.info = info
+
+    def forward(self, x):
+        return self.f(x)
+
+    def __repr__(self):
+        return "Fun {} {}".format(self.info, self.f)
 
 def conform_tensors1(
     a: Tensor, args: List[Tensor], slop: int = 9999, dims: List[int] = []
