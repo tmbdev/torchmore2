@@ -20,8 +20,31 @@ from .combos import make_unet
 from .ctc import SimpleCharset
 from .ctc import ctc_decode
 from .ctc import pack_for_ctc
+from .ctc import unpack_from_ctc
 from .ctc import collate4ocr
 from .ctc import CTCLossBDL
+
+# Symbols from layers
+from .layers import Fun
+from .layers import Fun_
+from .layers import conform_tensors1
+from .layers import conform1
+from .layers import conform_tensors
+from .layers import conform
+from .layers import reorder
+from .layers import Info
+from .layers import CheckSizes
+from .layers import Device
+from .layers import CheckRange
+from .layers import NoopSub
+from .layers import KeepSize
+from .layers import Additive
+from .layers import Parallel
+from .layers import Shortcut
+from .layers import SimplePooling2d
+from .layers import AcrossPooling2d
+from .layers import ModPad
+from .layers import ModPadded
 
 # Symbols from flex
 from .flex import arginfo
@@ -69,31 +92,6 @@ from .inputstats import SampleTensorBase
 from .inputstats import SampleTensor
 from .inputstats import SampleGradient
 
-# Symbols from layers
-from .layers import Fun
-from .layers import Fun_
-from .layers import conform_tensors1
-from .layers import conform1
-from .layers import conform_tensors
-from .layers import conform
-from .layers import reorder
-from .layers import Info
-from .layers import CheckSizes
-from .layers import Device
-from .layers import CheckRange
-from .layers import LSTM
-from .layers import BDL_LSTM
-from .layers import BDHW_LSTM
-from .layers import BDHW_LSTM_to_BDH
-from .layers import NoopSub
-from .layers import KeepSize
-from .layers import Additive
-from .layers import Parallel
-from .layers import Shortcut
-from .layers import SimplePooling2d
-from .layers import AcrossPooling2d
-from .layers import ModPad
-from .layers import ModPadded
 
 # Symbols from localimport
 from .localimport import LocalImport

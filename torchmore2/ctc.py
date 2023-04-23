@@ -71,6 +71,17 @@ def pack_for_ctc(seqs):
     return (allseqs, alllens)
 
 
+def unpack_from_ctc(pair):
+    """Unpack a list of sequences from nn.CTCLoss."""
+    allseqs, alllens = pair
+    seqs = []
+    start = 0
+    for l in alllens:
+        seqs.append(allseqs[start : start + l])
+        start += l
+    return seqs
+
+
 def collate4ocr(samples):
     """Collate image+sequence samples into batches.
 
