@@ -17,6 +17,7 @@ from .combos import UnetLayer2
 from .combos import make_unet
 
 # Symbols from ctc
+from .ctc import SimpleCharset
 from .ctc import ctc_decode
 from .ctc import pack_for_ctc
 from .ctc import collate4ocr

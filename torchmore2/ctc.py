@@ -16,7 +16,7 @@ from torch import nn, optim
 from . import flex, layers
 
 
-class DefaultCharset:
+class SimpleCharset:
     def __init__(self, chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
         if isinstance(chars, str):
             chars = list(chars)
