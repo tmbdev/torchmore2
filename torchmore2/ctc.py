@@ -17,7 +17,7 @@ from . import flex, layers
 
 
 class SimpleCharset:
-    def __init__(self, chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
+    def __init__(self, chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,.?!'\"~"):
         if isinstance(chars, str):
             chars = list(chars)
         self.chars = [""] + chars
@@ -26,6 +26,7 @@ class SimpleCharset:
         return len(self.chars)
 
     def encode_char(self, c):
+        assert isinstance(c, str)
         try:
             index = self.chars.index(c)
         except ValueError:
