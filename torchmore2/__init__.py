@@ -70,6 +70,8 @@ from .inputstats import SampleTensor
 from .inputstats import SampleGradient
 
 # Symbols from layers
+from .layers import Fun
+from .layers import Fun_
 from .layers import conform_tensors1
 from .layers import conform1
 from .layers import conform_tensors
