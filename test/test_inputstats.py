@@ -6,11 +6,13 @@
 from __future__ import unicode_literals
 
 import pdb
-import pytest
 
+import pytest
 import torch
 from torch import nn
-from torchmore import inputstats
+
+from torchmore2 import inputstats
+
 
 def test_InputStats():
     mod = inputstats.InputStats(name="mystats")

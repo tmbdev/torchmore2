@@ -8,7 +8,6 @@ import inspect
 
 
 class LocalImport(object):
-
     def __init__(self, names):
         if not isinstance(names, dict):
             names = vars(names)
@@ -17,8 +16,7 @@ class LocalImport(object):
     def __enter__(self):
         self.frame = inspect.currentframe()
         bindings = self.frame.f_back.f_globals
-        self.old_bindings = {k: bindings.get(
-            k, None) for k in list(self.names.keys())}
+        self.old_bindings = {k: bindings.get(k, None) for k in list(self.names.keys())}
         bindings.update(self.names)
 
     def __exit__(self, some_type, value, traceback):

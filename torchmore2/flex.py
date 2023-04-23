@@ -17,6 +17,7 @@ verbose = False
 def arginfo(l):
     return tuple([p.shape if isinstance(p, torch.Tensor) else p for p in l])
 
+
 class Flex(nn.Module):
     def __init__(self, creator):
         super(Flex, self).__init__()
@@ -136,7 +137,9 @@ def LSTMn(*args, **kw):
         elif x.ndimension() == 4:
             return layers.BDHW_LSTM(x.size(1), *args, **kw)
         else:
-            raise ValueError(f"{x.shape}: multidimensional LSTM not implemented for this rank array")
+            raise ValueError(
+                f"{x.shape}: multidimensional LSTM not implemented for this rank array"
+            )
 
     return Flex(creator)
 

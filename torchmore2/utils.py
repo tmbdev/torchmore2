@@ -1,11 +1,16 @@
 import sys
+import warnings
+from typing import Callable, List, Tuple, Type
+
 import numpy as np
 import torch
-from torch import Tensor
-from torch import autograd, nn
+from torch import Tensor, autograd, nn
 from torch.nn import functional as F
-import warnings
-from typing import Callable, Tuple, List, Type
+
+
+def model_device(model):
+    """Find the device of a model."""
+    return next(model.parameters()).device
 
 
 def DEPRECATED(f: Callable):

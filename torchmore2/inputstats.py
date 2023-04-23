@@ -5,9 +5,9 @@
 #
 
 import warnings
+
 import torch
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
 
 
 def empty_stats():
@@ -30,7 +30,7 @@ def check_range(stats: Tensor, x: float):
 def check_sigma(stats: Tensor, x: float, sigmas: float = 4.0):
     assert stats[2] > 0
     mean = stats[3] / stats[2]
-    std = ((stats[4] / stats[2]) - mean ** 2) ** 0.5
+    std = ((stats[4] / stats[2]) - mean**2) ** 0.5
     return x >= mean - sigmas * std and x <= mean + sigmas * std
 
 
@@ -104,7 +104,7 @@ class SampleTensorBase(nn.Module):
 
     def add_tensor(self, tensor: Tensor):
         self.count += 1
-        if (self.count-1) % self.every != 0:
+        if (self.count - 1) % self.every != 0:
             return
         a = torch.tensor(tensor.detach(), device="cpu")
         if self.buf is None:
@@ -134,13 +134,16 @@ class SampleTensorBase(nn.Module):
 class SampleTensor(SampleTensorBase):
     def __init__(self, bufsize: int = 4096):
         super().__init__(bufsize)
+
     def forward(self, a):
         self.add_tensor(a)
         return a
 
-class SampleGrandient(SampleTensorBase):
+
+class SampleGradient(SampleTensorBase):
     def __init__(self, bufsize: int = 4096):
         super().__init__(bufsize)
+
     def backward(self, grad_output):
         self.add_tensor(grad_output)
         return grad_output

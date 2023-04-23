@@ -1,6 +1,7 @@
 import torch
 from torch import nn
-from . import layers, flex
+
+from . import flex, layers
 
 
 def fc_block(sizes, batchnorm=True, nonlin=nn.ReLU, flatten=True):
@@ -115,6 +116,7 @@ def mayberelu(leaky):
     else:
         return [nn.LeakyReLU(leaky)]
 
+
 def maybedropout(d):
     if d <= 0.0:
         return []
@@ -124,7 +126,9 @@ def maybedropout(d):
 # Unet Architecture
 
 
-def UnetLayer0(d, sub=None, post=None, dropout=0.0, leaky=0.0, instancenorm=False, relu=None):
+def UnetLayer0(
+    d, sub=None, post=None, dropout=0.0, leaky=0.0, instancenorm=False, relu=None
+):
     result = nn.Sequential(
         flex.Conv2d(d, 3, padding=1),
         *opt(instancenorm, flex.InstanceNorm2d()),
@@ -133,7 +137,7 @@ def UnetLayer0(d, sub=None, post=None, dropout=0.0, leaky=0.0, instancenorm=Fals
             nn.MaxPool2d(2),
             *opt(dropout > 0, nn.Dropout2d(dropout)),
             *maybexp(sub),
-            flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1)
+            flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1),
         ),
         *maybedropout(dropout),
         *maybexp(post),
@@ -141,7 +145,16 @@ def UnetLayer0(d, sub=None, post=None, dropout=0.0, leaky=0.0, instancenorm=Fals
     return result
 
 
-def UnetLayer1(d, sub=None, post=None, dropout=0.0, relu=0.2, instancenorm=True, instancenorm2=True, relu2=None):
+def UnetLayer1(
+    d,
+    sub=None,
+    post=None,
+    dropout=0.0,
+    relu=0.2,
+    instancenorm=True,
+    instancenorm2=True,
+    relu2=None,
+):
     # Only instancenorm2 and relu2 are optional in the original
     result = nn.Sequential(
         layers.Shortcut(
@@ -149,7 +162,9 @@ def UnetLayer1(d, sub=None, post=None, dropout=0.0, relu=0.2, instancenorm=True,
             *opt(instancenorm, flex.InstanceNorm2d()),
             *mayberelu(relu),
             *maybexp(sub),
-            flex.ConvTranspose2d(d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d),
+            flex.ConvTranspose2d(
+                d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d
+            ),
             *opt(instancenorm2, flex.InstanceNorm2d()),
             *mayberelu(relu2),
             *maybedropout(dropout),
@@ -178,6 +193,7 @@ def UnetLayer2(d, sub=None, pre=2, post=2, dropout=0.0, leaky=0.0):
     )
     return result
 
+
 def make_unet(sizes, dropout=[0.0] * 100, mode=2, sub=2, **kw):
     if isinstance(dropout, float):
         dropout = [dropout] * len(sizes)
@@ -188,7 +204,10 @@ def make_unet(sizes, dropout=[0.0] * 100, mode=2, sub=2, **kw):
         if isinstance(sub, int):
             sublayers = []
             for i in range(sub):
-                sublayers += [flex.Conv2d(sizes[1], kernel_size=3, padding=1), nn.ReLU()]
+                sublayers += [
+                    flex.Conv2d(sizes[1], kernel_size=3, padding=1),
+                    nn.ReLU(),
+                ]
             sub = sublayers
         return make_layer(sizes[0], sub=sub, **kw)
     else:

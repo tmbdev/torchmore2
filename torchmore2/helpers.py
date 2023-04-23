@@ -44,6 +44,7 @@ def sequence_is_normalized(a, dim=-1):
 
 class LearningRateSchedule(object):
     """Translate n1,lr1:n2,lr2... into a function that maps steps into learning rates."""
+
     def __init__(self, schedule):
         if ":" in schedule:
             self.learning_rates = [
@@ -90,6 +91,7 @@ class Schedule:
             if schedule("eventname", 60):
                 ...
     """
+
     def __init__(self):
         self.jobs = {}
 

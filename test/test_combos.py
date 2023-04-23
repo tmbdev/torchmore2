@@ -6,8 +6,8 @@
 
 import torch
 from torch import nn
-from torchmore import combos
-from torchmore import flex
+
+from torchmore2 import combos, flex
 
 
 def test_UnetLayer():

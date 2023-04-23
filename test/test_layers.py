@@ -8,9 +8,10 @@ from __future__ import unicode_literals
 import pdb
 
 import torch
-from torch import nn
-from torchmore import layers
 import torch.jit
+from torch import nn
+
+from torchmore2 import layers
 
 
 def NO_test_weighted_grad():
@@ -61,54 +62,6 @@ def test_CheckRange():
     a = torch.ones((2, 3, 4))
     b = mod(a)
     assert (b.cpu() == a.cpu()).all()
-    torch.jit.script(mod)
-
-
-def test_Input():
-    mod = layers.Input("ABCD", sizes=(4, 5, 2, 3))
-    a = torch.ones((2, 3, 4, 5))
-    # a.order = "CDAB"
-    # b = mod(a)
-    # assert tuple(b.shape) == (4, 5, 2, 3)
-    torch.jit.script(mod)
-
-
-def test_Reorder():
-    mod = layers.Reorder("ABC", "CBA")
-    a = torch.ones((2, 3, 4))
-    b = mod(a)
-    assert tuple(b.shape) == (4, 3, 2)
-    torch.jit.script(mod)
-
-
-def test_Permute():
-    mod = layers.Permute(2, 1, 0)
-    a = torch.ones((2, 3, 4))
-    b = mod(a)
-    assert tuple(b.shape) == (4, 3, 2)
-    torch.jit.script(mod)
-
-
-def test_Reshape():
-    mod = layers.Reshape(0, [2, 1])
-    a = torch.ones((2, 3, 4))
-    b = mod(a)
-    assert tuple(b.shape) == (2, 12)
-    # not Jittable
-    # torch.jit.script(mod)
-
-def test_Collapse():
-    mod = layers.Collapse(1, 2)
-    a = torch.ones((2, 3, 4))
-    b = mod(a)
-    assert tuple(b.shape) == (2, 12)
-    torch.jit.script(mod)
-
-def test_Viewer():
-    mod = layers.Viewer(6, 4)
-    a = torch.ones((2, 3, 4))
-    b = mod(a)
-    assert tuple(b.shape) == (6, 4)
     torch.jit.script(mod)
 
 

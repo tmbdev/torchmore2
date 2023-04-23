@@ -4,13 +4,13 @@
 # See the LICENSE file for licensing terms (TBD).
 #
 
+import warnings
+
 import numpy as np
 import torch
 from torch import autograd, nn
-from torch.autograd import Variable
-import warnings
 
-from torchmore import flex, layers
+from torchmore2 import flex, layers
 
 kw = dict(kernel_size=3, padding=1)
 
