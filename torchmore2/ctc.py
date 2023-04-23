@@ -16,6 +16,31 @@ from torch import nn, optim
 from . import flex, layers
 
 
+class DefaultCharset:
+    def __init__(self, chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
+        if isinstance(chars, str):
+            chars = list(chars)
+        self.chars = [""] + chars
+
+    def __len__(self):
+        return len(self.chars)
+
+    def encode_char(self, c):
+        try:
+            index = self.chars.index(c)
+        except ValueError:
+            index = len(self.chars) - 1
+        return max(index, 1)
+
+    def encode(self, s):
+        assert isinstance(s, str)
+        return [self.encode_char(c) for c in s]
+
+    def decode(self, l):
+        assert isinstance(l, list)
+        return "".join([self.chars[k] for k in l])
+
+
 def ctc_decode(probs, sigma=1.0, threshold=0.7, kind=None, full=False):
     """A simple decoder for CTC-trained OCR recognizers.
 
@@ -75,7 +100,9 @@ def CTCLossBDL(log_softmax=True):
     ctc_loss = nn.CTCLoss()
 
     def lossfn(outputs, targets):
-        assert isinstance(targets, tuple) and len(targets) == 2, "wrong format, maybe use pack_for_ctc?"
+        assert (
+            isinstance(targets, tuple) and len(targets) == 2
+        ), "wrong format, maybe use pack_for_ctc?"
         assert targets[0].amin() >= 1, targets
         assert targets[0].amax() < outputs.size(1), targets
         assert not torch.isnan(outputs).any()  # FIXME
