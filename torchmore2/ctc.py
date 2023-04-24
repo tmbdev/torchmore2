@@ -48,7 +48,8 @@ def ctc_decode(probs, sigma=1.0, threshold=0.7, kind=None, full=False):
     :probs: d x l sequence classification output
     """
     assert probs.ndim == 2, probs.shape
-    probs = asnp(probs.T)
+    assert isinstance(probs, np.ndarray)
+    probs = probs.T
     assert (
         abs(probs.sum(1) - 1) < 1e-4
     ).all(), f"input not normalized; did you apply .softmax()? {probs.sum(1)}"
