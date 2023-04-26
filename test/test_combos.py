@@ -6,6 +6,7 @@
 
 import torch
 from torch import nn
+import torch.jit
 
 from torchmore2 import combos, flex
 
@@ -22,6 +23,7 @@ def test_UnetLayer():
         b = mod(a)
         assert b.shape[:1] == a.shape[:1]
         assert b.shape[2:] == a.shape[2:]
+        torch.jit.script(mod)
 
 
 def test_make_unet():
@@ -30,10 +32,13 @@ def test_make_unet():
             continue
         print(f"testting mode {mode}:")
         mod = combos.make_unet([16, 32, 64], dropout=[0.5, 0.5, 0.5], mode=mode)
+        flex.shape_inference(mod, (17, 11, 64, 64))
         a = torch.ones((17, 11, 64, 64))
         b = mod(a)
         assert b.shape[:1] == a.shape[:1]
         assert b.shape[2:] == a.shape[2:]
+        print(mod)
+        torch.jit.script(mod)
 
 
 def test_ResnetBlock():
@@ -41,6 +46,7 @@ def test_ResnetBlock():
     a = torch.ones((17, 33, 64, 64))
     b = mod(a)
     assert tuple(b.size()) == (17, 33, 64, 64)
+    torch.jit.script(mod)
 
 
 def test_ResnetBottleneck():
@@ -48,3 +54,4 @@ def test_ResnetBottleneck():
     a = torch.ones((17, 33, 64, 64))
     b = mod(a)
     assert tuple(b.size()) == (17, 33, 64, 64)
+    torch.jit.script(mod)

@@ -39,7 +39,7 @@ def conv2d_block(d, r=3, mp=None, fmp=None, repeat=1, batchnorm=True, nonlin=nn.
 
 
 def ResnetBottleneck(d, b, r=3, identity=None, post=None):
-    return layers.Additive(
+    return layers.Additive2(
         identity or nn.Identity(),
         nn.Sequential(
             nn.Conv2d(d, b, 1),
@@ -56,7 +56,7 @@ def ResnetBottleneck(d, b, r=3, identity=None, post=None):
 
 def ResnetBlock(d, r=3, identity=None, post=None):
     """Block for Resnet."""
-    return layers.Additive(
+    return layers.Additive2(
         identity or nn.Identity(),
         nn.Sequential(
             nn.Conv2d(d, d, r, padding=r // 2),
@@ -133,11 +133,13 @@ def UnetLayer0(
         flex.Conv2d(d, 3, padding=1),
         *opt(instancenorm, flex.InstanceNorm2d()),
         *mayberelu(relu),
-        layers.Shortcut(
-            nn.MaxPool2d(2),
-            *opt(dropout > 0, nn.Dropout2d(dropout)),
-            *maybexp(sub),
-            flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1),
+        layers.Shortcut1(
+            nn.Sequential(
+                nn.MaxPool2d(2),
+                *opt(dropout > 0, nn.Dropout2d(dropout)),
+                *maybexp(sub),
+                flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1),
+            )
         ),
         *maybedropout(dropout),
         *maybexp(post),
@@ -157,17 +159,19 @@ def UnetLayer1(
 ):
     # Only instancenorm2 and relu2 are optional in the original
     result = nn.Sequential(
-        layers.Shortcut(
-            flex.Conv2d(d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d),
-            *opt(instancenorm, flex.InstanceNorm2d()),
-            *mayberelu(relu),
-            *maybexp(sub),
-            flex.ConvTranspose2d(
-                d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d
-            ),
-            *opt(instancenorm2, flex.InstanceNorm2d()),
-            *mayberelu(relu2),
-            *maybedropout(dropout),
+        layers.Shortcut1(
+            nn.Sequential(
+                flex.Conv2d(d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d),
+                *opt(instancenorm, flex.InstanceNorm2d()),
+                *mayberelu(relu),
+                *maybexp(sub),
+                flex.ConvTranspose2d(
+                    d, kernel_size=4, stride=2, padding=1, bias=nn.InstanceNorm2d
+                ),
+                *opt(instancenorm2, flex.InstanceNorm2d()),
+                *mayberelu(relu2),
+                *maybedropout(dropout),
+            )
         ),
         *maybexp(post),
     )
@@ -183,11 +187,13 @@ def UnetLayer2(d, sub=None, pre=2, post=2, dropout=0.0, leaky=0.0):
         postlayers += [flex.Conv2d(d, kernel_size=3, padding=1), nn.ReLU()]
     result = nn.Sequential(
         *prelayers,
-        layers.Shortcut(
-            nn.MaxPool2d(2),
-            *maybexp(sub),
-            flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1),
-            *maybedropout(dropout),
+        layers.Shortcut1(
+            nn.Sequential(
+                nn.MaxPool2d(2),
+                *maybexp(sub),
+                flex.ConvTranspose2d(d, 3, stride=2, padding=1, output_padding=1),
+                *maybedropout(dropout),
+            ),
         ),
         *postlayers,
     )

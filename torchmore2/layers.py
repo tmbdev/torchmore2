@@ -393,7 +393,56 @@ class Shortcut(nn.Module):
         assert x.shape[: self.dim] == y.shape[: self.dim], (x.shape, y.shape)
         assert x.shape[self.dim + 1 :] == y.shape[self.dim + 1 :], (x.shape, y.shape)
         return torch.cat([x, y], dim=self.dim)
+    
 
+# The above variable args modules are not jittable, so here are fixed number
+# argument versions
+
+class Additive2(nn.Module):
+    """Additive wrap-around module for Resnet-style architectures.
+
+    :args: modules whose output is to be added
+    :post: module to execute after everything has been added
+    """
+
+    def __init__(self, f, g, post=None):
+        super().__init__()
+        self.f = f
+        self.g = g
+        self.post = None
+
+    def forward(self, x):
+        y = self.f(x) + self.g(x)
+        if self.post is not None:
+            y = self.post(y)
+        return y
+
+class Parallel2(nn.Module):
+    """Run modules in parallel and concatenate the results."""
+
+    def __init__(self, f, g, dim=1):
+        super().__init__()
+        self.f = f 
+        self.g = g
+        self.dim = dim
+
+    def forward(self, x):
+        return torch.cat([self.f(x), self.g(x)], dim=self.dim)
+
+
+class Shortcut1(nn.Module):
+    """Run modules in parallel and concatenate the results."""
+
+    def __init__(self, f, dim=1):
+        super().__init__()
+        self.f = f
+        self.dim = dim
+
+    def forward(self, x):
+        y = self.f(x)
+        assert x.shape[: self.dim] == y.shape[: self.dim], (x.shape, y.shape)
+        assert x.shape[self.dim + 1 :] == y.shape[self.dim + 1 :], (x.shape, y.shape)
+        return torch.cat([x, y], dim=self.dim)
 
 class SimplePooling2d(nn.Module):
     """Perform max pooling/unpooling"""
